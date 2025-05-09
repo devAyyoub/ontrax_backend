@@ -9,7 +9,6 @@ export class ProjectController {
         res.send('Proyecto creado correctamente')
     } catch (error) {
         console.log(error);
-        
     }
   };
   static getAllProjects = async (req: Request, res: Response) => {
