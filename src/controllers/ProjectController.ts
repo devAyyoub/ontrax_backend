@@ -20,7 +20,6 @@ export class ProjectController {
     }
   };
   static getProjectById = async (req: Request, res: Response) : Promise<void> => {
-    console.log(req.params);
     try {
         const {id} = req.params
         const project = await Project.findById(id)
