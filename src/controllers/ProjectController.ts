@@ -1,10 +1,18 @@
 import type { Request, Response } from "express";
+import Project from "../models/Project";
 
 export class ProjectController {
-  static getAllProjects = async (req: Request, res: Response) => {
-    res.send('All the projects')
-  };
   static createProject = async (req: Request, res: Response) => {
-    res.send('Creating project...')
+    const project = new Project(req.body)
+    try {
+        await project.save()
+        res.send('Proyecto creado correctamente')
+    } catch (error) {
+        console.log(error);
+        
+    }
+  };
+  static getAllProjects = async (req: Request, res: Response) => {
+    res.send("All the projects");
   };
 }
