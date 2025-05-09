@@ -19,18 +19,38 @@ export class ProjectController {
       console.log(error);
     }
   };
-  static getProjectById = async (req: Request, res: Response) : Promise<void> => {
+  static getProjectById = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const { id } = req.params;
     try {
-        const {id} = req.params
-        const project = await Project.findById(id)
-        if(!project) {
-            const error = new Error('Proyecto no encontrado')
-            res.status(404).json({error: error.message})
-            return
-        }
-        res.json(project)
+      const project = await Project.findById(id);
+      if (!project) {
+        const error = new Error("Proyecto no encontrado");
+        res.status(404).json({ error: error.message });
+        return;
+      }
+      res.json(project);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
+  };
+  static updateProject = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    try {
+      const project = await Project.findByIdAndUpdate(id, req.body);
+
+      if (!project) {
+        const error = new Error("Proyecto no encontrado");
+        res.status(404).json({ error: error.message });
+        return;
+      }
+
+      await project.save();
+      res.send("Proyecto actualizado");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
