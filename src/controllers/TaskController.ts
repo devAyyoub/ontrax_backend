@@ -50,22 +50,54 @@ export class TaskController {
   };
   static updateTask = async (req: Request, res: Response): Promise<void> => {
     try {
-      const task = await Task.findByIdAndUpdate(
-        req.params.taskId,
-        req.body
+      const task = await Task.findById(
+        req.params.taskId
       ).populate("project");
       if (!task) {
         res.status(404).json({ error: "Tarea no encontrada" });
         return;
       }
-      if (task.project.id !== req.project.id) {
+      if (
+        !task.project ||
+        task.project.id === null ||
+        task.project.id !== req.project.id
+      ) {
         res.status(400).json({ error: "No existe esa tarea en ese proyecto" });
         return;
       }
-
+      task.name = req.body.name
+      task.description = req.body.description
+      task.save()
       res.send("Tarea actualizada correctamente");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+  static deleteTask = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const task = await Task.findById(req.params.taskId, req.body);
+      if (!task) {
+        res.status(404).json({ error: "Tarea no encontrada" });
+        return;
+      }
+      // if (
+      //   !task.project ||
+      //   task.project.id === null ||
+      //   task.project.id !== req.project.id
+      // ) {
+      //   res.status(400).json({ error: "No existe esa tarea en ese proyecto" });
+      //   return;
+      // }
+      req.project.tasks = req.project.tasks.filter(
+        (task) => task.toString() !== req.params.taskId
+      );
+
+      await Promise.allSettled([task.deleteOne(), req.project.save()])
+      res.send("Tarea eliminada correctamente");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+      console.log(error);
+      
     }
   };
 }
