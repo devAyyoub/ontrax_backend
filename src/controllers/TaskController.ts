@@ -19,28 +19,53 @@ export class TaskController {
     res: Response
   ): Promise<void> => {
     try {
-      const tasks = await Task.find({project: req.project.id}).populate('project')
-      res.json(tasks)
+      const tasks = await Task.find({ project: req.project.id }).populate(
+        "project"
+      );
+      res.json(tasks);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
   };
   static getTaskById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const task = await Task.findById(req.params.taskId).populate('project')
-      if(!task) {
-        res.status(404).json({error: 'Tarea no encontrada'})
-        return
-      }      
-      if(task.project.id !== req.project.id) {
-        res.status(400).json({error: 'Acción no válida'})
-        return
+      const task = await Task.findById(req.params.taskId).populate("project");
+      if (!task) {
+        res.status(404).json({ error: "Tarea no encontrada" });
+        return;
       }
-      res.json(task)
+      if (
+        !task.project ||
+        task.project.id === null ||
+        task.project.id !== req.project.id
+      ) {
+        res.status(400).json({ error: "No existe esa tarea en ese proyecto" });
+        return;
+      }
+
+      res.json(task);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
-  }
+  };
+  static updateTask = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const task = await Task.findByIdAndUpdate(
+        req.params.taskId,
+        req.body
+      ).populate("project");
+      if (!task) {
+        res.status(404).json({ error: "Tarea no encontrada" });
+        return;
+      }
+      if (task.project.id !== req.project.id) {
+        res.status(400).json({ error: "No existe esa tarea en ese proyecto" });
+        return;
+      }
 
-  
+      res.send("Tarea actualizada correctamente");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
 }
