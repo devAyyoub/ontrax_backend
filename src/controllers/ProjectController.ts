@@ -8,7 +8,7 @@ export class ProjectController {
       await project.save();
       res.send("Proyecto creado correctamente");
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
   static getAllProjects = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export class ProjectController {
       const projects = await Project.find({});
       res.json(projects);
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
   static getProjectById = async (
@@ -33,7 +33,7 @@ export class ProjectController {
       }
       res.json(project);
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
   static updateProject = async (req: Request, res: Response): Promise<void> => {
@@ -52,7 +52,7 @@ export class ProjectController {
       await project.save();
       res.send("Proyecto actualizado");
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
   static deleteProject = async (req: Request, res: Response): Promise<void> => {
@@ -68,7 +68,7 @@ export class ProjectController {
       await project.deleteOne();
       res.send("Proyecto eliminado");
     } catch (error) {
-      console.log(error);
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
 }
