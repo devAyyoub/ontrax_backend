@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import User from "../models/User";
 import { hashPassword } from "../utils/auth";
+import { generateToken } from "../utils/token";
+import Token from "../models/Token";
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response): Promise<void> => {
@@ -16,8 +18,16 @@ export class AuthController {
       }
       // Create a user
       const user = new User(req.body);
+
+      // Hash password
       user.password = await hashPassword(password);
-      await user.save();
+
+      // Generate token
+      const token = new Token()
+      token.token = generateToken()
+      token.user = user.id
+
+      await Promise.allSettled([user.save(), token.save()])
       res.send("Cuenta creada, revista tu email para confirmarla");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
