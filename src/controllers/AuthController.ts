@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import User from "../models/User";
-import { hashPassword } from "../utils/auth";
+import { checkPassword, hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token";
 import Token from "../models/Token";
 import { AuthEmail } from "../emails/AuthEmail";
@@ -88,6 +88,15 @@ export class AuthController {
         res.status(401).send({ error: error.message });
         return;
       }
+
+      // Check the pasword
+      const isPasswordCorrect = await checkPassword(password, user.password)
+      if (!isPasswordCorrect) {
+        const error = new Error("Contraseña incorrecta");
+        res.status(401).send({ error: error.message });
+        return;
+      }
+      res.send('Autenticado...')
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
