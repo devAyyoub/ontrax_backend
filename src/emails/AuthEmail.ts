@@ -20,8 +20,6 @@ export class AuthEmail {
             <p>Este token expira en 10 minutos</p>
         `,
       });
-
       console.log('Mensaje enviado', info.messageId);
-      
     }
 }
