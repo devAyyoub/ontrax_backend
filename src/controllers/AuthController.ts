@@ -3,9 +3,18 @@ import User from "../models/User";
 import { hashPassword } from "../utils/auth";
 
 export class AuthController {
-  static createAccount = async (req: Request, res: Response) => {
+  static createAccount = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { password } = req.body;
+      const { password, email } = req.body;
+
+      // Prevent duplicated email's
+      const userExists = await User.findOne({ email });
+      if (userExists) {
+        const error = new Error("El usuario ya está registrado");
+        res.status(409).json({ error: error.message });
+        return;
+      }
+      // Create a user
       const user = new User(req.body);
       user.password = await hashPassword(password);
       await user.save();
