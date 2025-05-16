@@ -51,7 +51,7 @@ export class AuthController {
       const tokenExists = await Token.findOne({ token });
       if (!tokenExists) {
         const error = new Error("Token incorrecto o expirado");
-        res.status(401).send({ error: error.message });
+        res.status(404).send({ error: error.message });
         return;
       }
       const user = await User.findById(tokenExists.user);
@@ -59,7 +59,37 @@ export class AuthController {
       await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
       res.send("Cuenta confirmada");
     } catch (error) {
-      res.status(500).json({ error: "Hubo un error" + error });
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+
+  static login = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error("Usuario no encontrado");
+        res.status(404).send({ error: error.message });
+        return;
+      }
+      if (!user.confirmed) {
+        const token = new Token();
+        token.token = generateToken();
+        token.user = user.id;
+        await token.save();
+
+        AuthEmail.sendConfirmationEmail({
+          email: user.email,
+          name: user.name,
+          token: token.token,
+        });
+
+        const error = new Error("Cuenta no confirmada, hemos enviado un correo de confirmación");
+        res.status(401).send({ error: error.message });
+        return;
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
     }
   };
 }

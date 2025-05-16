@@ -25,15 +25,17 @@ router.post(
 
 router.post(
   "/confirm-account",
-  body("password-confirmation").custom((value, { req }) => {
-    if (value !== req.body.password) {
-      throw new Error("Las contraseñas no coinciden");
-    } else {
-      return true;
-    }
-  }),
   body("token").notEmpty().withMessage("El token no puede ir vacío"),
-  handleInputErrors, AuthController.confirmAccount
+  handleInputErrors,
+  AuthController.confirmAccount
+);
+
+router.post(
+  "/login",
+  body("email").isEmail().withMessage("Email no válido"),
+  body("password").notEmpty().withMessage("La contraseña no puede ir vacía"),
+  handleInputErrors,
+  AuthController.login
 );
 
 export default router;
