@@ -46,15 +46,18 @@ export class AuthController {
     res: Response
   ): Promise<void> => {
     try {
-        const { token } = req.body
+      const { token } = req.body;
 
-        const tokenExists = await Token.findOne({token})
-        if(!tokenExists) {
-            const error = new Error('Token incorrecto o expirado')
-            res.status(401).send({error: error.message})
-            return
-        }
-        
+      const tokenExists = await Token.findOne({ token });
+      if (!tokenExists) {
+        const error = new Error("Token incorrecto o expirado");
+        res.status(401).send({ error: error.message });
+        return;
+      }
+      const user = await User.findById(tokenExists.user);
+      user.confirmed = true;
+      await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
+      res.send("Cuenta confirmada");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" + error });
     }
