@@ -3,8 +3,7 @@ import User from "../models/User";
 import { hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token";
 import Token from "../models/Token";
-import { transporter } from "../config/nodemailer";
-
+import { AuthEmail } from "../emails/AuthEmail";
 export class AuthController {
   static createAccount = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -29,12 +28,10 @@ export class AuthController {
       token.user = user.id;
 
       // Send the email
-      await transporter.sendMail({
-        from: "Ontrax <admin@ontrax.com>",
-        to: user.email,
-        subject: "Ontrax - Confirma tu cuenta",
-        text: "Ontrax - Confirma tu cuenta",
-        html: `<p>Probando email</p>`,
+      AuthEmail.sendConfirmationEmail({
+        email: user.email,
+        name: user.name,
+        token: token.token
       });
 
       await Promise.allSettled([user.save(), token.save()]);
