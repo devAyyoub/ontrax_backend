@@ -3,6 +3,7 @@ import User from "../models/User";
 import { hashPassword } from "../utils/auth";
 import { generateToken } from "../utils/token";
 import Token from "../models/Token";
+import { transporter } from "../config/nodemailer";
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response): Promise<void> => {
@@ -23,14 +24,23 @@ export class AuthController {
       user.password = await hashPassword(password);
 
       // Generate token
-      const token = new Token()
-      token.token = generateToken()
-      token.user = user.id
+      const token = new Token();
+      token.token = generateToken();
+      token.user = user.id;
 
-      await Promise.allSettled([user.save(), token.save()])
+      // Send the email
+      await transporter.sendMail({
+        from: "Ontrax <admin@ontrax.com>",
+        to: user.email,
+        subject: "Ontrax - Confirma tu cuenta",
+        text: "Ontrax - Confirma tu cuenta",
+        html: `<p>Probando email</p>`,
+      });
+
+      await Promise.allSettled([user.save(), token.save()]);
       res.send("Cuenta creada, revista tu email para confirmarla");
     } catch (error) {
-      res.status(500).json({ error: "Hubo un error" });
+      res.status(500).json({ error: "Hubo un error" + error });
     }
   };
 }
