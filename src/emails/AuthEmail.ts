@@ -15,7 +15,7 @@ export class AuthEmail {
         text: "Ontrax - Confirma tu cuenta",
         html: `<p>Hola ${user.name}. Has creado tu cuenta en Ontrax, ya casi está todo listo, solo tienes que confirmar tu cuenta</p>
             <p>Visita el siguiente enlace:</p>
-            <a href="">Confirmar cuenta</a>
+            <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
             <p>E ingresa el siguiente código: <b>${user.token}</b></p>
             <p>Este token expira en 10 minutos</p>
         `,
