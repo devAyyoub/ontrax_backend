@@ -161,7 +161,7 @@ export class AuthController {
       const token = new Token();
       token.token = generateToken();
       token.user = user.id;
-      await token.save()
+      await token.save();
 
       // Send the email
       AuthEmail.sendPasswordResetToken({
@@ -175,10 +175,7 @@ export class AuthController {
     }
   };
 
-  static validateToken = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  static validateToken = async (req: Request, res: Response): Promise<void> => {
     try {
       const { token } = req.body;
 
@@ -202,7 +199,7 @@ export class AuthController {
     try {
       const { token } = req.params;
       const { password } = req.body;
- 
+
       const tokenExists = await Token.findOne({ token });
       if (!tokenExists) {
         const error = new Error("Token incorrecto o expirado");
@@ -210,10 +207,9 @@ export class AuthController {
         return;
       }
 
-      const user = await User.findById(tokenExists.user)
-      user.password = await hashPassword(password)
-      await Promise.allSettled([user.save(), tokenExists.deleteOne()])
-
+      const user = await User.findById(tokenExists.user);
+      user.password = await hashPassword(password);
+      await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
       res.send("Contraseña modificada correctamente");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
