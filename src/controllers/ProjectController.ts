@@ -61,6 +61,11 @@ export class ProjectController {
         res.status(404).json({ error: error.message });
         return;
       }
+      if (project.manager.toString() !== req.user.id) {
+        const error = new Error("Acción no válida");
+        res.status(404).json({ error: error.message });
+        return;
+      }
       project.projectName = req.body.projectName
       project.clientName = req.body.clientName
       project.description = req.body.description
@@ -77,6 +82,11 @@ export class ProjectController {
 
       if (!project) {
         const error = new Error("Proyecto no encontrado");
+        res.status(404).json({ error: error.message });
+        return;
+      }
+      if (project.manager.toString() !== req.user.id) {
+        const error = new Error("Acción no válida");
         res.status(404).json({ error: error.message });
         return;
       }
