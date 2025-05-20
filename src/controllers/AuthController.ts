@@ -100,7 +100,7 @@ export class AuthController {
         return;
       }
 
-      const token = generateJWT({id: user.id})
+      const token = generateJWT({ id: user.id });
 
       res.send(token);
     } catch (error) {
@@ -218,5 +218,10 @@ export class AuthController {
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
+  };
+
+  static user = async (req: Request, res: Response): Promise<void> => {
+    res.json(req.user);
+    return;
   };
 }
