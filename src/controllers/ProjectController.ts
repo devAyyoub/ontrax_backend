@@ -17,7 +17,11 @@ export class ProjectController {
   };
   static getAllProjects = async (req: Request, res: Response) => {
     try {
-      const projects = await Project.find({});
+      const projects = await Project.find({
+        $or: [
+          {manager: {$in: req.user.id}}
+        ]
+      });
       res.json(projects);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
