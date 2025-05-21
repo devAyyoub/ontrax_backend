@@ -20,6 +20,19 @@ export class TeamMemberController {
       res.status(500).json({ error: "Hubo un error" });
     }
   };
+
+  static getProjectTeam = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const project = await Project.findById(req.project.id).populate({
+        path: 'team',
+        select: 'id email name'
+    })
+
+    res.json(project.team)
+  }
+
   static addMemberByID = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.body;
