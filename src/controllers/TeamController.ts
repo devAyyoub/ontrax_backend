@@ -20,4 +20,28 @@ export class TeamMemberController {
       res.status(500).json({ error: "Hubo un error" });
     }
   };
+  static addMemberByID = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+        const {id} = req.body
+        const user = await User.findById(id).select('id')
+        if (!user) {
+            const error = new Error('Usuario no encontrado')
+            res.status(404).json({error: error.message})
+            return
+        }
+        if(req.project.team.some(team => team.toString() === user.id.toString())) {
+            const error = new Error('El usuario ya existe en el proyecto')
+            res.status(409).json({error: error.message})
+            return
+        }
+        req.project.team.push(user.id)
+        await req.project.save()
+        res.send('Usuario agregado correctamente')
+    } catch (error) {   
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
 }
