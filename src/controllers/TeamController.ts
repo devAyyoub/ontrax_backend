@@ -61,10 +61,10 @@ export class TeamMemberController {
     res: Response
   ): Promise<void> => {
     try {
-      const { id } = req.body;
+      const { userId } = req.params;
 
       if (
-        !req.project.team.some((team) => team.toString() === id)
+        !req.project.team.some((team) => team.toString() === userId)
       ) {
         const error = new Error("El usuario no existe en el proyecto");
         res.status(409).json({ error: error.message });
@@ -72,7 +72,7 @@ export class TeamMemberController {
       }
 
       req.project.team = req.project.team.filter(
-        (teamMember) => teamMember.toString() !== id
+        (teamMember) => teamMember.toString() !== userId
       );
 
       await req.project.save();
