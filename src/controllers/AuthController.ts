@@ -48,8 +48,8 @@ export class AuthController {
   ): Promise<void> => {
     try {
       const { token } = req.body;
-
       const tokenExists = await Token.findOne({ token });
+      
       if (!tokenExists) {
         const error = new Error("Token incorrecto o expirado");
         res.status(404).send({ error: error.message });

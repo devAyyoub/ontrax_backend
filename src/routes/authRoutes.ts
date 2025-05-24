@@ -82,6 +82,4 @@ router.get('/user',
     AuthController.user
 )
 
-
-
 export default router;
