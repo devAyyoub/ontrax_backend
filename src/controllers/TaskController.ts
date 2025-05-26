@@ -59,10 +59,15 @@ export class TaskController {
   };
   static updateStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { status } = req.body;      
-      req.task.status = status      
-      await req.task.save()
-      res.send('Tarea actualizada')
+      const { status } = req.body;
+      req.task.status = status;
+      if (status === "pending") {
+        req.task.completedBy = null;
+      } else {
+        req.task.completedBy = req.user.id;
+      }
+      await req.task.save();
+      res.send("Tarea actualizada");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
