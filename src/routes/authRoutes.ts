@@ -92,7 +92,9 @@ router.put(
 router.put(
   "/update-password",
   authenticate,
-  body("current_password").notEmpty().withMessage("La contraseña actual es obligatoria"),
+  body("current_password")
+    .notEmpty()
+    .withMessage("La contraseña actual es obligatoria"),
   body("password")
     .isLength({ min: 8 })
     .withMessage("La contraseña debe tener mínimo 8 caracteres"),
@@ -105,6 +107,14 @@ router.put(
   }),
   handleInputErrors,
   AuthController.updateCurrentUserPassword
+);
+
+router.post(
+  "/check-password",
+  authenticate,
+  body("password").notEmpty().withMessage("La contraseña es obligatoria"),
+  handleInputErrors,
+  AuthController.checkPassword
 );
 
 export default router;
