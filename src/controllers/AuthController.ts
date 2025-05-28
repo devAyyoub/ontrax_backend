@@ -49,7 +49,7 @@ export class AuthController {
     try {
       const { token } = req.body;
       const tokenExists = await Token.findOne({ token });
-      
+
       if (!tokenExists) {
         const error = new Error("Token incorrecto o expirado");
         res.status(404).send({ error: error.message });
@@ -223,5 +223,27 @@ export class AuthController {
   static user = async (req: Request, res: Response): Promise<void> => {
     res.json(req.user);
     return;
+  };
+
+  static updateProfile = async (req: Request, res: Response): Promise<void> => {
+    const { name, email } = req.body;
+
+    const userExists = await User.findOne({email})
+
+    if (userExists && userExists.id.toString() !== req.user.id.toString()) {
+      const error = new Error("Ese email ya está registrado");
+      res.status(409).send({ error: error.message });
+      return;
+    }
+
+    req.user.name = name;
+    req.user.email = email;
+
+    try {
+      await req.user.save();
+      res.send("Perfil actualizado correctamente");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" + error });
+    }
   };
 }

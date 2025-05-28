@@ -62,7 +62,7 @@ router.post(
 
 router.post(
   "/update-password/:token",
-  param('token').isNumeric().withMessage('Token no válido'),
+  param("token").isNumeric().withMessage("Token no válido"),
   body("password")
     .isLength({ min: 8 })
     .withMessage("La contraseña debe tener mínimo 8 caracteres"),
@@ -77,9 +77,16 @@ router.post(
   AuthController.updatePasswordWithToken
 );
 
-router.get('/user', 
-    authenticate,
-    AuthController.user
-)
+router.get("/user", authenticate, AuthController.user);
+
+/** Profile */
+router.put(
+  "/profile",
+  authenticate,
+  body("email").isEmail().withMessage("Email no válido"),
+  body("name").notEmpty().withMessage("El nombre es obligatorio"),
+  handleInputErrors,
+  AuthController.updateProfile
+);
 
 export default router;
