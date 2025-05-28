@@ -89,4 +89,22 @@ router.put(
   AuthController.updateProfile
 );
 
+router.put(
+  "/update-password",
+  authenticate,
+  body("current_password").notEmpty().withMessage("La contraseña actual es obligatoria"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("La contraseña debe tener mínimo 8 caracteres"),
+  body("password_confirmation").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Las contraseñas no coinciden");
+    } else {
+      return true;
+    }
+  }),
+  handleInputErrors,
+  AuthController.updateCurrentUserPassword
+);
+
 export default router;
