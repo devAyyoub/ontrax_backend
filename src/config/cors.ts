@@ -1,5 +1,11 @@
 import cors, { CorsOptions } from "cors";
 
+// 🔓 CORS temporalmente abierto a todos los orígenes
+export const corsConfig: CorsOptions = {
+  origin: true,
+};
+
+/*
 export const corsConfig: CorsOptions = {
   origin: (origin, callback) => {
     const whitelist = [process.env.FRONTEND_URL];
@@ -19,3 +25,4 @@ export const corsConfig: CorsOptions = {
     }
   },
 };
+*/
