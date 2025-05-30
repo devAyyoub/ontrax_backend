@@ -1,116 +1,175 @@
-# OnTrax Backend
+# 📋 OnTrax Backend
 
-OnTrax is a RESTful API backend system for project and task management built with Express.js, MongoDB, and TypeScript.
+Un sistema de API RESTful robusto para gestión de proyectos y tareas construido con Express.js, MongoDB y TypeScript.
 
-## Purpose
+## 🚀 Características Principales
 
-OnTrax enables users to manage projects and tasks within a structured system, providing the following core functionalities:
+- ✅ **Gestión Completa de Proyectos y Tareas** - CRUD completo para proyectos y sus tareas asociadas
+- 🔐 **Sistema de Autenticación Completo** - Registro, login, confirmación por email y recuperación de contraseña
+- 📧 **Notificaciones por Email** - Confirmación de cuentas y recuperación de contraseñas
+- 🛡️ **Validación de Datos** - Middleware robusto para validación de entrada
+- 🗄️ **Base de Datos NoSQL** - Almacenamiento persistente con MongoDB
+- 📝 **Sistema de Notas** - Funcionalidad adicional para gestión de notas
+- 🔒 **Autenticación JWT** - Tokens seguros para autenticación de usuarios
 
-- Creating, retrieving, updating, and deleting projects  
-- Managing tasks within projects with different status workflows  
-- Validating incoming requests through middleware  
-- Storing data persistently in MongoDB
+## 🛠️ Tecnologías Utilizadas [1](#0-0) 
 
-## System Architecture
+- **Express.js** - Framework web para Node.js
+- **MongoDB + Mongoose** - Base de datos NoSQL y ODM
+- **TypeScript** - JavaScript tipado para mejor desarrollo
+- **JWT** - Autenticación basada en tokens
+- **bcrypt** - Hash seguro de contraseñas
+- **Nodemailer** - Envío de emails
+- **Express Validator** - Validación de requests
 
-OnTrax follows a layered architecture pattern with clear separation of concerns:
+## 📁 Estructura del Proyecto [2](#0-1) 
 
-- **API Layer**: Handles HTTP requests and routes  
-- **Middleware Layer**: Validates input and enforces business rules  
-- **Controller Layer**: Contains business logic  
-- **Data Layer**: Manages data persistence using Mongoose models
-
-## Technologies Used
-
-- **Express.js**: Web framework for routing and HTTP handling  
-- **MongoDB**: NoSQL database for data persistence  
-- **Mongoose**: ODM library for MongoDB interaction  
-- **TypeScript**: Typed JavaScript for improved development  
-- **Express Validator**: Request validation middleware  
-- **dotenv**: Environment variable management
-
-## Data Models
-
-The system has two primary data entities with a parent-child relationship:
-
-### Project Model
-
-- `projectName` (String, required)  
-- `clientName` (String, required)  
-- `description` (String, required)  
-- `tasks` (Array of Task ObjectIds)  
-- `timestamps` (`createdAt`, `updatedAt`)  
-
-### Task Model
-
-- `name` (String, required)  
-- `description` (String, required)  
-- `project` (ObjectId reference to Project)  
-- `status` (Enum: `pending`, `onHold`, `inProgress`, `under_review`, `completed`)  
-- `timestamps` (`createdAt`, `updatedAt`)  
-
-## API Endpoints
-
-### Project Endpoints
-
-```http
-POST   /api/projects               # Create a new project
-GET    /api/projects               # Retrieve all projects
-GET    /api/projects/:id          # Retrieve a single project
-PUT    /api/projects/:id          # Update a project
-DELETE /api/projects/:id          # Delete a project
+```
+src/
+├── config/          # Configuraciones (DB, CORS, etc.)
+├── controllers/     # Lógica de negocio
+├── emails/          # Templates y configuración de emails
+├── middleware/      # Middleware personalizado
+├── models/          # Modelos de datos (Mongoose)
+├── routes/          # Definición de rutas
+├── utils/           # Utilidades y helpers
+├── index.ts         # Punto de entrada
+└── server.ts        # Configuración del servidor
 ```
 
-### Task Endpoints
+## 🗄️ Modelos de Datos
+
+### Usuario [3](#0-2) 
+
+### Autenticación Segura [4](#0-3) 
+
+### Proyecto y Tareas
+El sistema mantiene una relación padre-hijo entre proyectos y tareas, permitiendo una organización jerárquica clara.
+
+## 🌐 API Endpoints
+
+### Autenticación [5](#0-4) 
 
 ```http
-POST   /api/projects/:projectId/tasks                 # Create a new task in a project
-GET    /api/projects/:projectId/tasks                 # Get all tasks in a project
-GET    /api/projects/:projectId/tasks/:taskId         # Get a specific task
-PUT    /api/projects/:projectId/tasks/:taskId         # Update a task
-DELETE /api/projects/:projectId/tasks/:taskId         # Delete a task
-POST   /api/projects/:projectId/tasks/:taskId/status  # Update task status
+POST   /api/auth/create-account      # Crear nueva cuenta
+POST   /api/auth/login               # Iniciar sesión
+POST   /api/auth/confirm-account     # Confirmar cuenta por email
+POST   /api/auth/forgot-password     # Solicitar recuperación de contraseña
 ```
 
-## Installation
+### Proyectos y Tareas [6](#0-5) 
+
+```http
+POST   /api/projects                 # Crear proyecto
+GET    /api/projects                 # Obtener todos los proyectos
+GET    /api/projects/:id             # Obtener proyecto específico
+PUT    /api/projects/:id             # Actualizar proyecto
+DELETE /api/projects/:id             # Eliminar proyecto
+
+POST   /api/projects/:id/tasks       # Crear tarea en proyecto
+GET    /api/projects/:id/tasks       # Obtener tareas del proyecto
+PUT    /api/projects/:id/tasks/:taskId  # Actualizar tarea
+DELETE /api/projects/:id/tasks/:taskId  # Eliminar tarea
+```
+
+## ⚙️ Instalación y Configuración
+
+### Prerrequisitos
+- Node.js (v16 o superior)
+- MongoDB
+- npm o yarn
+
+### Pasos de Instalación
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/devAyyoub/ontrax_backend.git
-cd ontrax_backend
+# 1. Clonar el repositorio
+git clone https://github.com/devAyyoub/ontrax_backup.git
+cd ontrax_backup
 
-# 2. Install dependencies
+# 2. Instalar dependencias
 npm install
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
+### 3. Configuración de Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
 
 ```env
 PORT=4000
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=tu_string_de_conexion_mongodb
+JWT_SECRET=tu_secreto_jwt_super_seguro
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=tu_email@gmail.com
+EMAIL_PASS=tu_contraseña_de_aplicacion
+FRONTEND_URL=http://localhost:3000
 ```
 
-4. Start the development server:
+### 4. Ejecutar el Proyecto [7](#0-6) 
 
 ```bash
+# Desarrollo
 npm run dev
+
+# Desarrollo solo API
+npm run dev:api
+
+# Construcción
+npm run build
+
+# Producción
+npm start
 ```
 
-## Usage
+## 🔧 Scripts Disponibles
 
-Once the server is running, you can interact with the API using tools like Postman or curl. The API accepts and returns JSON data.
+- `npm run dev` - Ejecuta el servidor en modo desarrollo con hot reload
+- `npm run dev:api` - Ejecuta solo la API en modo desarrollo
+- `npm run build` - Compila TypeScript a JavaScript
+- `npm start` - Ejecuta el servidor en modo producción
 
-### Example request to create a project:
+## 📝 Uso de la API
+
+### Ejemplo: Crear una cuenta
+
+```http
+POST /api/auth/create-account
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "email": "juan@ejemplo.com",
+  "password": "contraseña123",
+  "password_confirmation": "contraseña123"
+}
+```
+
+### Ejemplo: Crear un proyecto
 
 ```http
 POST /api/projects
+Authorization: Bearer tu_jwt_token
 Content-Type: application/json
-```
 
-```json
 {
-  "projectName": "Website Redesign",
-  "clientName": "Acme Corp",
-  "description": "Complete redesign of company website"
+  "projectName": "Rediseño Web",
+  "clientName": "Empresa ABC",
+  "description": "Rediseño completo del sitio web corporativo"
 }
 ```
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 👨‍💻 Autor
+
+**devAyyoub** - [GitHub](https://github.com/devAyyoub)
+
+---
+
+⭐ Si este proyecto te ha sido útil, ¡no olvides darle una estrella!
